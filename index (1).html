@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Excel: основные функции</title>
+<style>
+:root{--bg:#f4f8f5;--fg:#13261b;--muted:#586c5f;--card:#fff;--line:#d5e3da;--ac:#1d6f42;--ac2:#33c481;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a12;--fg:#e6f2ea;--muted:#9bb0a3;--card:#15271c;--line:#27402f;--ac:#33c481;--ac2:#1d6f42;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1a12;--fg:#e6f2ea;--muted:#9bb0a3;--card:#15271c;--line:#27402f;--ac:#33c481;--ac2:#1d6f42;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;overflow:hidden;
+background-image:radial-gradient(circle at 12% 8%,color-mix(in srgb,var(--ac2) 22%,transparent),transparent 45%),radial-gradient(circle at 92% 92%,color-mix(in srgb,var(--ac) 18%,transparent),transparent 40%)}
+#bar{height:4px;background:var(--ac);width:0;transition:width .5s ease}
+#stage{flex:1;position:relative;min-height:0}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:22px;overflow-y:auto;max-width:980px;margin:0 auto;width:100%}
+.slide.active{display:flex}
+.tag{color:var(--ac);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+h1{font-size:clamp(34px,8vw,68px);line-height:1.05;margin-bottom:16px}
+h2{font-size:clamp(26px,5.5vw,42px);line-height:1.1;margin-bottom:14px}
+p{font-size:clamp(16px,2.3vw,19px);line-height:1.55;color:var(--muted);max-width:44em;margin-bottom:12px}
+p b,li b{color:var(--fg)}
+.rv{opacity:0;transform:translateY(22px);animation:rv .6s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i,0)*.12s + .1s)}
+@keyframes rv{to{opacity:1;transform:none}}
+.logo{width:84px;height:84px;border-radius:20px;background:linear-gradient(135deg,var(--ac2),var(--ac));display:grid;place-items:center;color:#fff;font-size:52px;font-weight:800;margin-bottom:22px;animation:float 3s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px) rotate(-3deg)}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-4px);border-color:var(--ac)}
+.card h3{font-size:17px;margin-bottom:4px}
+.card span{font-size:14px;color:var(--muted);line-height:1.4;display:block}
+ul{list-style:none;padding:0;max-width:640px}
+li{padding:11px 0 11px 34px;position:relative;font-size:clamp(15px,2.3vw,18px);line-height:1.45;color:var(--muted);border-bottom:1px solid var(--line)}
+li::before{content:"✓";position:absolute;left:0;top:11px;width:22px;height:22px;border-radius:50%;background:var(--ac);color:#fff;font-size:13px;display:grid;place-items:center}
+.tbl{display:grid;grid-template-columns:34px 1.4fr 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card);font-size:15px;max-width:360px;margin-bottom:16px}
+.tbl div{padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.tbl .h{background:color-mix(in srgb,var(--ac) 14%,var(--card));color:var(--ac);font-weight:700;text-align:center}
+.syn{font-size:14px;color:var(--muted);margin-bottom:14px}
+.syn code{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--ac);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
+.line{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.fx{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:clamp(14px,3.6vw,21px);color:var(--ac);min-height:46px;min-width:min(100%,270px)}
+.fx i{display:inline-block;width:2px;height:1em;background:var(--ac);vertical-align:-3px;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.out{font-size:clamp(20px,5vw,30px);font-weight:800;color:var(--ac);opacity:0;transform:scale(.6);transition:all .45s cubic-bezier(.3,1.6,.5,1)}
+.out.show{opacity:1;transform:none}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:6px}
+.key{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.key kbd{font-family:ui-monospace,Menlo,monospace;background:var(--ac);color:#fff;border-radius:6px;padding:3px 7px;font-size:13px;white-space:nowrap}
+nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px 14px;max-width:980px;margin:0 auto;width:100%}
+nav button{border:0;background:var(--ac);color:#fff;font-size:20px;width:48px;height:48px;border-radius:50%;cursor:pointer;transition:transform .15s}
+nav button:active{transform:scale(.9)}
+nav button:disabled{opacity:.3}
+#dots{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+#dots span{width:9px;height:9px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .3s}
+#dots span.on{background:var(--ac);width:24px;border-radius:5px}
+#cnt{font-size:13px;color:var(--muted);min-width:42px;text-align:center}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+
+<section class="slide">
+<div class="logo rv">X</div>
+<div class="tag rv" style="--i:1">Презентация</div>
+<h1 class="rv" style="--i:2">Excel: основные функции</h1>
+<p class="rv" style="--i:3">Что это за программа, для каких задач она нужна и какие функции стоит знать каждому. Листай стрелками или свайпом →</p>
+</section>
+
+<section class="slide">
+<div class="tag rv">01 · Что такое Excel</div>
+<h2 class="rv" style="--i:1">Программа, которая считает за тебя</h2>
+<p class="rv" style="--i:2">Microsoft Excel — это <b>электронная таблица</b>. Данные записываются в ячейки, а ячейки объединены в строки и столбцы. У каждой ячейки есть адрес: например, <b>B2</b> — это столбец B и строка 2.</p>
+<p class="rv" style="--i:3">Главная идея Excel — <b>формулы</b>. Ты пишешь, что нужно посчитать, и результат обновляется сам, как только меняются исходные числа. Не нужно пересчитывать вручную.</p>
+<div class="grid">
+<div class="card rv" style="--i:4"><h3>Ячейка</h3><span>хранит число, текст или формулу</span></div>
+<div class="card rv" style="--i:5"><h3>Лист</h3><span>одна большая таблица</span></div>
+<div class="card rv" style="--i:6"><h3>Книга</h3><span>файл с несколькими листами</span></div>
+</div>
+</section>
+
+<section class="slide">
+<div class="tag rv">02 · Для каких задач</div>
+<h2 class="rv" style="--i:1">Где применяют Excel</h2>
+<ul>
+<li class="rv" style="--i:1"><b>Личный бюджет</b> — доходы, расходы, накопления на цель</li>
+<li class="rv" style="--i:2"><b>Учёт и склад</b> — списки товаров, остатки, продажи</li>
+<li class="rv" style="--i:3"><b>Учёба</b> — оценки, статистика, обработка данных лабораторных работ</li>
+<li class="rv" style="--i:4"><b>Бизнес-отчёты</b> — итоги по месяцам, прибыль, графики для руководства</li>
+<li class="rv" style="--i:5"><b>Планирование</b> — расписания, списки дел, трекеры привычек</li>
+</ul>
+</section>
+
+<section class="slide">
+<div class="tag rv">03 · Функции</div>
+<h2 class="rv" style="--i:1">СУММ и СРЗНАЧ</h2>
+<p class="rv" style="--i:2"><b>Функция</b> — готовая формула со своим именем. Начинай запись со знака <b>=</b>. Возьмём таблицу продаж:</p>
+<div class="tbl rv" style="--i:3">
+<div class="h"></div><div class="h">A</div><div class="h">B</div>
+<div class="h">2</div><div>Яблоки</div><div>300</div>
+<div class="h">3</div><div>Груши</div><div>450</div>
+<div class="h">4</div><div>Сливы</div><div>200</div>
+<div class="h">5</div><div>Мёд</div><div>300</div>
+</div>
+<div class="line rv" style="--i:4"><div class="fx"><span class="t" data-t="=СУММ(B2:B5)"></span><i></i></div><div class="out">1 250</div></div>
+<p class="syn rv" style="--i:5">СУММ складывает все числа диапазона.</p>
+<div class="line rv" style="--i:5"><div class="fx"><span class="t" data-t="=СРЗНАЧ(B2:B5)"></span><i></i></div><div class="out">312,5</div></div>
+<p class="syn rv" style="--i:6">СРЗНАЧ находит среднее арифметическое.</p>
+</section>
+
+<section class="slide">
+<div class="tag rv">04 · Функции</div>
+<h2 class="rv" style="--i:1">МАКС, МИН и СЧЁТ</h2>
+<p class="rv" style="--i:2">Эти функции быстро отвечают на вопросы: «Какой самый большой результат?», «Какой самый маленький?», «Сколько у меня записей?». Данные — та же таблица продаж.</p>
+<div class="line rv" style="--i:3"><div class="fx"><span class="t" data-t="=МАКС(B2:B5)"></span><i></i></div><div class="out">450</div></div>
+<p class="syn rv" style="--i:3">МАКС — наибольшее значение в диапазоне.</p>
+<div class="line rv" style="--i:4"><div class="fx"><span class="t" data-t="=МИН(B2:B5)"></span><i></i></div><div class="out">200</div></div>
+<p class="syn rv" style="--i:4">МИН — наименьшее значение.</p>
+<div class="line rv" style="--i:5"><div class="fx"><span class="t" data-t="=СЧЁТ(B2:B5)"></span><i></i></div><div class="out">4</div></div>
+<p class="syn rv" style="--i:5">СЧЁТ — сколько ячеек содержат числа.</p>
+</section>
+
+<section class="slide">
+<div class="tag rv">05 · Функции</div>
+<h2 class="rv" style="--i:1">ЕСЛИ — функция с условием</h2>
+<p class="rv" style="--i:2">Самая популярная логическая функция. Excel проверяет условие и выбирает один из двух ответов.</p>
+<p class="syn rv" style="--i:3">Синтаксис: <code>=ЕСЛИ(условие; если_да; если_нет)</code></p>
+<div class="line rv" style="--i:4"><div class="fx"><span class="t" data-t='=ЕСЛИ(B2>=300;"Хорошо";"Мало")'></span><i></i></div><div class="out">Хорошо</div></div>
+<p class="syn rv" style="--i:5">У яблок продано 300 — условие верно, поэтому ответ «Хорошо». Для сливок (200) получилось бы «Мало».</p>
+<p class="rv" style="--i:6">Так можно автоматически ставить оценки, отмечать долги, находить выполненный план.</p>
+</section>
+
+<section class="slide">
+<div class="tag rv">06 · Функции</div>
+<h2 class="rv" style="--i:1">ВПР — поиск по таблице</h2>
+<p class="rv" style="--i:2">ВПР ищет значение в первом столбце таблицы и возвращает данные из той же строки. Удобно, когда нужно найти цену по названию или оценку по фамилии.</p>
+<p class="syn rv" style="--i:3">Синтаксис: <code>=ВПР(что_ищем; таблица; номер_столбца; 0)</code></p>
+<div class="line rv" style="--i:4"><div class="fx"><span class="t" data-t='=ВПР("Груши";A2:B5;2;0)'></span><i></i></div><div class="out">450</div></div>
+<p class="syn rv" style="--i:5">Нуль в конце означает точное совпадение. В новых версиях Excel есть более удобная замена — ПРОСМОТРX.</p>
+</section>
+
+<section class="slide">
+<div class="tag rv">07 · Функции</div>
+<h2 class="rv" style="--i:1">СЧЁТЕСЛИ и СУММЕСЛИ</h2>
+<p class="rv" style="--i:2">Считают не всё подряд, а только то, что подходит под условие. Например, только продажи больше 250.</p>
+<div class="line rv" style="--i:3"><div class="fx"><span class="t" data-t='=СЧЁТЕСЛИ(B2:B5;">250")'></span><i></i></div><div class="out">3</div></div>
+<p class="syn rv" style="--i:4">СЧЁТЕСЛИ — сколько ячеек удовлетворяют условию (300, 450 и 300).</p>
+<div class="line rv" style="--i:5"><div class="fx"><span class="t" data-t='=СУММЕСЛИ(B2:B5;">250")'></span><i></i></div><div class="out">1 050</div></div>
+<p class="syn rv" style="--i:6">СУММЕСЛИ — сумма только подходящих ячеек.</p>
+</section>
+
+<section class="slide">
+<div class="tag rv">08 · Полезные приёмы</div>
+<h2 class="rv" style="--i:1">Горячие клавиши и советы</h2>
+<div class="keys">
+<div class="key rv" style="--i:1"><kbd>Alt + =</kbd> автосумма выделенных ячеек</div>
+<div class="key rv" style="--i:2"><kbd>F4</kbd> закрепить адрес в формуле ($A$1)</div>
+<div class="key rv" style="--i:3"><kbd>Ctrl + Z</kbd> отменить действие</div>
+<div class="key rv" style="--i:4"><kbd>Ctrl + Shift + L</kbd> включить фильтр</div>
+<div class="key rv" style="--i:5"><kbd>Ctrl + D</kbd> скопировать формулу вниз</div>
+<div class="key rv" style="--i:6"><kbd>Ctrl + S</kbd> сохранить файл</div>
+</div>
+<p class="rv" style="--i:7;margin-top:16px">Протяни за маленький квадрат в углу ячейки — формула сама скопируется на соседние строки.</p>
+</section>
+
+<section class="slide">
+<div class="tag rv">Итоги</div>
+<h2 class="rv" style="--i:1">Что нужно запомнить</h2>
+<ul>
+<li class="rv" style="--i:1">Excel — таблицы, которые автоматически считают и анализируют данные</li>
+<li class="rv" style="--i:2">Любая формула начинается со знака <b>=</b></li>
+<li class="rv" style="--i:3">Базовый набор: <b>СУММ, СРЗНАЧ, МАКС, МИН, СЧЁТ</b></li>
+<li class="rv" style="--i:4">Для решений: <b>ЕСЛИ, ВПР, СЧЁТЕСЛИ, СУММЕСЛИ</b></li>
+<li class="rv" style="--i:5">Навык пригодится в школе, вузе и на любой работе</li>
+</ul>
+<p class="rv" style="--i:6;margin-top:16px">Спасибо за внимание! 🎉</p>
+</section>
+
+</div>
+<nav>
+<button id="pv" aria-label="Назад">←</button>
+<div id="dots"></div>
+<span id="cnt"></span>
+<button id="nx" aria-label="Вперёд">→</button>
+</nav>
+<script>
+var S=[].slice.call(document.querySelectorAll('.slide')),n=0,tk=0;
+var dots=document.getElementById('dots');
+S.forEach(function(_,i){var d=document.createElement('span');d.onclick=function(){go(i)};dots.appendChild(d)});
+function go(i){
+  n=Math.max(0,Math.min(S.length-1,i));
+  S.forEach(function(s,k){s.classList.toggle('active',k===n)});
+  [].forEach.call(dots.children,function(d,k){d.classList.toggle('on',k===n)});
+  document.getElementById('bar').style.width=((n+1)/S.length*100)+'%';
+  document.getElementById('cnt').textContent=(n+1)+'/'+S.length;
+  document.getElementById('pv').disabled=n===0;
+  document.getElementById('nx').disabled=n===S.length-1;
+  S[n].scrollTop=0;
+  typeAll();
+  try{history.replaceState(null,'','#s'+(n+1))}catch(e){}
+}
+function typeAll(){
+  var my=++tk,ts=[].slice.call(S[n].querySelectorAll('.t'));
+  ts.forEach(function(t){t.textContent='';var o=t.closest('.line').querySelector('.out');o.classList.remove('show')});
+  var k=0;
+  function next(){
+    if(my!==tk||k>=ts.length)return;
+    var t=ts[k++],txt=t.dataset.t,i=0;
+    (function step(){
+      if(my!==tk)return;
+      i++;t.textContent=txt.slice(0,i);
+      if(i<txt.length)setTimeout(step,45);
+      else{t.closest('.line').querySelector('.out').classList.add('show');setTimeout(next,450)}
+    })();
+  }
+  setTimeout(next,700);
+}
+document.getElementById('pv').onclick=function(){go(n-1)};
+document.getElementById('nx').onclick=function(){go(n+1)};
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')go(n+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(n-1);
+});
+var x0=null;
+document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',function(e){
+  if(x0===null)return;var d=e.changedTouches[0].clientX-x0;
+  if(Math.abs(d)>50)go(n+(d<0?1:-1));x0=null;
+},{passive:true});
+var h=parseInt((location.hash||'').replace('#s',''),10);
+go(h>0?h-1:0);
+</script>
+</body>
+</html>
